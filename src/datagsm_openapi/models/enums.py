@@ -22,7 +22,6 @@ class ClubType(str, Enum):
     """동아리 종류 (Club Type)."""
 
     MAJOR_CLUB = "MAJOR_CLUB"
-    JOB_CLUB = "JOB_CLUB"
     AUTONOMOUS_CLUB = "AUTONOMOUS_CLUB"
 
 

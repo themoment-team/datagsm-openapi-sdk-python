@@ -28,7 +28,6 @@ class Student(BaseModel):
         dormitory_floor: Dormitory floor number
         dormitory_room: Dormitory room number
         major_club: Major club membership
-        job_club: Job club membership
         autonomous_club: Autonomous club membership
     """
 
@@ -49,7 +48,6 @@ class Student(BaseModel):
         None, alias="dormitoryRoom", description="Dormitory room"
     )
     major_club: Optional[Club] = Field(None, alias="majorClub", description="Major club")
-    job_club: Optional[Club] = Field(None, alias="jobClub", description="Job club")
     autonomous_club: Optional[Club] = Field(
         None, alias="autonomousClub", description="Autonomous club"
     )

@@ -21,7 +21,8 @@ class StudentRequest:
         sex: Gender filter
         role: Student role filter
         dormitory_room: Dormitory room number
-        is_graduate: Filter by graduate status
+        include_withdrawn: Include withdrawn students (default: False)
+        only_enrolled: Filter to enrolled students only, excluding GRADUATE and WITHDRAWN
         page: Page number (default: 0)
         size: Page size (default: 300)
         sort_by: Sort field
@@ -37,7 +38,8 @@ class StudentRequest:
     sex: Optional[Sex] = None
     role: Optional[StudentRole] = None
     dormitory_room: Optional[int] = None
-    is_graduate: Optional[bool] = None
+    include_withdrawn: Optional[bool] = None
+    only_enrolled: Optional[bool] = None
     page: int = 0
     size: int = 300
     sort_by: Optional[StudentSortBy] = None
@@ -59,7 +61,8 @@ class StudentRequest:
             "sex": self.sex.value if self.sex else None,
             "role": self.role.value if self.role else None,
             "dormitoryRoom": self.dormitory_room,
-            "isGraduated": self.is_graduate,
+            "includeWithdrawn": self.include_withdrawn,
+            "onlyEnrolled": self.only_enrolled,
             "page": self.page,
             "size": self.size,
             "sortBy": self.sort_by.value if self.sort_by else None,
