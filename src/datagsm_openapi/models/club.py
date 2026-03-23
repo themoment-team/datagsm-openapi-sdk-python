@@ -48,8 +48,12 @@ class ClubDetail(BaseModel):
     name: str = Field(..., description="Club name")
     type: ClubType = Field(..., description="Club type")
     status: Optional[ClubStatus] = Field(None, description="Club operation status")
-    founded_year: Optional[int] = Field(None, alias="foundedYear", description="Year the club was founded")
-    abolished_year: Optional[int] = Field(None, alias="abolishedYear", description="Year the club was abolished")
+    founded_year: Optional[int] = Field(
+        None, alias="foundedYear", description="Year the club was founded"
+    )
+    abolished_year: Optional[int] = Field(
+        None, alias="abolishedYear", description="Year the club was abolished"
+    )
     leader: "ParticipantInfo" = Field(..., description="Club leader")
     participants: list["ParticipantInfo"] = Field(
         default_factory=list, description="Club members"
