@@ -3,7 +3,7 @@
 from dataclasses import dataclass
 from typing import Optional
 
-from ..models import ClubDetail, ClubResponse, ClubSortBy, ClubType, SortDirection
+from ..models import ClubDetail, ClubResponse, ClubSortBy, ClubStatus, ClubType, SortDirection
 from ._base import BaseApi
 
 
@@ -14,7 +14,8 @@ class ClubRequest:
     Attributes:
         club_id: Club ID for exact match
         club_name: Club name for filtering
-        club_type: Club type filter (MAJOR_CLUB, JOB_CLUB, AUTONOMOUS_CLUB)
+        club_type: Club type filter (MAJOR_CLUB, AUTONOMOUS_CLUB)
+        status: Club operation status filter (ACTIVE, ABOLISHED)
         page: Page number (default: 0)
         size: Page size (default: 100)
         include_leader_in_participants: Include leader in participants list (default: False)
@@ -25,6 +26,7 @@ class ClubRequest:
     club_id: Optional[int] = None
     club_name: Optional[str] = None
     club_type: Optional[ClubType] = None
+    status: Optional[ClubStatus] = None
     page: int = 0
     size: int = 100
     include_leader_in_participants: bool = False
@@ -41,6 +43,7 @@ class ClubRequest:
             "clubId": self.club_id,
             "clubName": self.club_name,
             "clubType": self.club_type.value if self.club_type else None,
+            "status": self.status.value if self.status else None,
             "page": self.page,
             "size": self.size,
             "includeLeaderInParticipants": self.include_leader_in_participants,
