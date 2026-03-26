@@ -4,6 +4,7 @@ from ._common import CommonApiResponse
 from .club import Club, ClubDetail, ClubResponse
 from .enums import (
     ClubSortBy,
+    ClubStatus,
     ClubType,
     Major,
     MealType,
@@ -22,6 +23,7 @@ __all__ = [
     "ClubDetail",
     "ClubResponse",
     "ClubSortBy",
+    "ClubStatus",
     "ClubType",
     "CommonApiResponse",
     "Major",

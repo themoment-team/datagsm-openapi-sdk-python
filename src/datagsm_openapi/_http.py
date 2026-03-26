@@ -4,6 +4,7 @@ from typing import Any, Optional
 
 import httpx
 
+from . import __version__
 from .exceptions import (
     BadRequestException,
     DataGsmException,
@@ -68,7 +69,7 @@ class HttpClient:
         return {
             "X-API-KEY": self.api_key,
             "Accept": "application/json",
-            "User-Agent": "datagsm-openapi-sdk-python/0.1.0",
+            "User-Agent": f"datagsm-openapi-sdk-python/{__version__}",
         }
 
     def _get_client(self) -> httpx.Client:

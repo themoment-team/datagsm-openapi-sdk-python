@@ -1,10 +1,10 @@
 """Club-related models for DataGSM OpenAPI SDK."""
 
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Optional
 
 from pydantic import BaseModel, ConfigDict, Field
 
-from .enums import ClubType
+from .enums import ClubStatus, ClubType
 
 if TYPE_CHECKING:
     from .project import ParticipantInfo
@@ -37,6 +37,9 @@ class ClubDetail(BaseModel):
         id: Club ID
         name: Club name
         type: Club type
+        status: Club operation status (ACTIVE or ABOLISHED)
+        founded_year: Year the club was founded
+        abolished_year: Year the club was abolished (None if still active)
         leader: Club leader information
         participants: List of club members
     """
@@ -44,6 +47,13 @@ class ClubDetail(BaseModel):
     id: int = Field(..., description="Club ID")
     name: str = Field(..., description="Club name")
     type: ClubType = Field(..., description="Club type")
+    status: Optional[ClubStatus] = Field(None, description="Club operation status")
+    founded_year: Optional[int] = Field(
+        None, alias="foundedYear", description="Year the club was founded"
+    )
+    abolished_year: Optional[int] = Field(
+        None, alias="abolishedYear", description="Year the club was abolished"
+    )
     leader: "ParticipantInfo" = Field(..., description="Club leader")
     participants: list["ParticipantInfo"] = Field(
         default_factory=list, description="Club members"

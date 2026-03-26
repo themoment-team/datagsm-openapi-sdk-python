@@ -66,12 +66,22 @@ class StudentSortBy(str, Enum):
     DORMITORY_ROOM = "DORMITORY_ROOM"
 
 
+class ClubStatus(str, Enum):
+    """동아리 운영 상태 (Club Status)."""
+
+    ACTIVE = "ACTIVE"
+    ABOLISHED = "ABOLISHED"
+
+
 class ClubSortBy(str, Enum):
     """동아리 정렬 기준 (Club Sort By)."""
 
     ID = "ID"
     NAME = "NAME"
     TYPE = "TYPE"
+    FOUNDED_YEAR = "FOUNDED_YEAR"
+    ABOLISHED_YEAR = "ABOLISHED_YEAR"
+    STATUS = "STATUS"
 
 
 class ProjectSortBy(str, Enum):
