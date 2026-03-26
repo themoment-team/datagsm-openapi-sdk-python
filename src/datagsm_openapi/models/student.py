@@ -23,7 +23,8 @@ class Student(BaseModel):
         class_num: Class number
         number: Student number within class
         student_number: Full student ID number
-        major: Major (SW_DEVELOPMENT, SMART_IOT, AI)
+        major: Department (SW_DEVELOPMENT, SMART_IOT, AI)
+        specialty: Specialty (e.g. Backend)
         role: Student role (GENERAL_STUDENT, STUDENT_COUNCIL, WITHDRAWN, etc.)
         dormitory_floor: Dormitory floor number
         dormitory_room: Dormitory room number
@@ -39,7 +40,8 @@ class Student(BaseModel):
     class_num: int = Field(..., alias="classNum", description="Class number")
     number: int = Field(..., description="Student number within class")
     student_number: int = Field(..., alias="studentNumber", description="Full student ID number")
-    major: Major = Field(..., description="Major")
+    major: Major = Field(..., description="Department (SW_DEVELOPMENT, SMART_IOT, AI)")
+    specialty: Optional[str] = Field(None, description="Specialty (e.g. Backend)")
     role: StudentRole = Field(..., description="Student role")
     dormitory_floor: Optional[int] = Field(
         None, alias="dormitoryFloor", description="Dormitory floor"
