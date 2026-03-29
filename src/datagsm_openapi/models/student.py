@@ -30,6 +30,8 @@ class Student(BaseModel):
         dormitory_room: Dormitory room number
         major_club: Major club membership
         autonomous_club: Autonomous club membership
+        github_id: GitHub account ID
+        github_url: GitHub profile URL
     """
 
     id: int = Field(..., description="Student ID")
@@ -52,6 +54,10 @@ class Student(BaseModel):
     major_club: Optional[Club] = Field(None, alias="majorClub", description="Major club")
     autonomous_club: Optional[Club] = Field(
         None, alias="autonomousClub", description="Autonomous club"
+    )
+    github_id: Optional[str] = Field(None, alias="githubId", description="GitHub account ID")
+    github_url: Optional[str] = Field(
+        None, alias="githubUrl", description="GitHub profile URL"
     )
 
     model_config = ConfigDict(populate_by_name=True)
