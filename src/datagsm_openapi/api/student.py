@@ -3,7 +3,7 @@
 from dataclasses import dataclass
 from typing import Optional
 
-from ..models import Sex, SortDirection, Student, StudentResponse, StudentRole, StudentSortBy
+from ..models import Major, Sex, SortDirection, Student, StudentResponse, StudentRole, StudentSortBy
 from ._base import BaseApi
 
 
@@ -22,6 +22,8 @@ class StudentRequest:
         role: Student role filter
         dormitory_room: Dormitory room number
         specialty: Specialty filter (e.g. Backend)
+        major: Major (department) filter
+        github_id: GitHub ID filter (partial match)
         include_withdrawn: Include withdrawn students (default: False)
         only_enrolled: Filter to enrolled students only, excluding GRADUATE and WITHDRAWN
         page: Page number (default: 0)
@@ -40,6 +42,8 @@ class StudentRequest:
     role: Optional[StudentRole] = None
     dormitory_room: Optional[int] = None
     specialty: Optional[str] = None
+    major: Optional[Major] = None
+    github_id: Optional[str] = None
     include_withdrawn: Optional[bool] = None
     only_enrolled: Optional[bool] = None
     page: int = 0
@@ -64,6 +68,8 @@ class StudentRequest:
             "role": self.role.value if self.role else None,
             "dormitoryRoom": self.dormitory_room,
             "specialty": self.specialty,
+            "major": self.major.value if self.major else None,
+            "githubId": self.github_id,
             "includeWithdrawn": self.include_withdrawn,
             "onlyEnrolled": self.only_enrolled,
             "page": self.page,
