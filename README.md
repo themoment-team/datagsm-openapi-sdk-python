@@ -17,4 +17,4 @@ uv pip install datagsm-openapi-sdk
 ```
 
 ### 사용법
-자세한 사용법은 [기술 문서](https://datagsm-front-docs.vercel.app/api/sdk/python)를 참고하십시오.
+자세한 사용법은 [기술 문서](https://docs.datagsm.kr/api/sdk/python)를 참고하십시오.
