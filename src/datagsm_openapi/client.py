@@ -23,7 +23,7 @@ class DataGsmClient:
         timeout: Request timeout in seconds
     """
 
-    DEFAULT_BASE_URL = "https://openapi.data.hellogsm.kr"
+    DEFAULT_BASE_URL = "https://openapi.datagsm.kr"
 
     def __init__(
         self,
@@ -35,7 +35,7 @@ class DataGsmClient:
 
         Args:
             api_key: Your DataGSM API key
-            base_url: Base URL for the API (default: https://openapi.data.hellogsm.kr)
+            base_url: Base URL for the API (default: https://openapi.datagsm.kr)
             timeout: Request timeout in seconds (default: 30.0)
         """
         self.base_url = base_url or self.DEFAULT_BASE_URL
