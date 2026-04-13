@@ -1,7 +1,7 @@
 """API modules for DataGSM OpenAPI SDK."""
 
 from .club import ClubApi, ClubRequest
-from .neis import MealRequest, NeisApi, ScheduleRequest
+from .neis import MealRequest, NeisApi, ScheduleRequest, TimetableRequest
 from .project import ProjectApi, ProjectRequest
 from .student import StudentApi, StudentRequest
 
@@ -15,4 +15,5 @@ __all__ = [
     "ScheduleRequest",
     "StudentApi",
     "StudentRequest",
+    "TimetableRequest",
 ]

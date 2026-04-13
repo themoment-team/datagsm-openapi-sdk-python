@@ -1,4 +1,4 @@
-"""NEIS-related models (급식, 학사일정) for DataGSM OpenAPI SDK."""
+"""NEIS-related models (급식, 학사일정, 시간표) for DataGSM OpenAPI SDK."""
 
 from datetime import date
 from typing import Optional
@@ -56,6 +56,18 @@ class Meal(BaseModel):
     model_config = ConfigDict(populate_by_name=True)
 
 
+class MealResponse(BaseModel):
+    """급식 목록 응답 래퍼 (Meal List Response Wrapper).
+
+    Attributes:
+        meals: List of meal information
+    """
+
+    meals: list[Meal] = Field(default_factory=list, description="List of meals")
+
+    model_config = ConfigDict(populate_by_name=True)
+
+
 class Schedule(BaseModel):
     """학사일정 정보 (School Schedule Information).
 
@@ -98,5 +110,65 @@ class Schedule(BaseModel):
     target_grades: list[int] = Field(
         default_factory=list, alias="targetGrades", description="Target grades"
     )
+
+    model_config = ConfigDict(populate_by_name=True)
+
+
+class ScheduleResponse(BaseModel):
+    """학사일정 목록 응답 래퍼 (Schedule List Response Wrapper).
+
+    Attributes:
+        schedules: List of schedule information
+    """
+
+    schedules: list[Schedule] = Field(default_factory=list, description="List of schedules")
+
+    model_config = ConfigDict(populate_by_name=True)
+
+
+class Timetable(BaseModel):
+    """시간표 정보 (Timetable Information).
+
+    Information about school timetables from NEIS.
+
+    Attributes:
+        timetable_id: Timetable ID
+        school_code: School code
+        school_name: School name
+        office_code: Education office code
+        office_name: Education office name
+        timetable_date: Timetable date
+        academic_year: Academic year
+        semester: Semester (nullable)
+        grade: Grade (1-3)
+        class_num: Class number (1-4)
+        period: Period number
+        subject: Subject name (nullable)
+    """
+
+    timetable_id: str = Field(..., alias="timetableId", description="Timetable ID")
+    school_code: str = Field(..., alias="schoolCode", description="School code")
+    school_name: str = Field(..., alias="schoolName", description="School name")
+    office_code: str = Field(..., alias="officeCode", description="Education office code")
+    office_name: str = Field(..., alias="officeName", description="Education office name")
+    timetable_date: date = Field(..., alias="timetableDate", description="Timetable date")
+    academic_year: str = Field(..., alias="academicYear", description="Academic year")
+    semester: Optional[str] = Field(None, alias="semester", description="Semester")
+    grade: int = Field(..., alias="grade", description="Grade (1-3)")
+    class_num: int = Field(..., alias="classNum", description="Class number (1-4)")
+    period: int = Field(..., alias="period", description="Period number")
+    subject: Optional[str] = Field(None, alias="subject", description="Subject name")
+
+    model_config = ConfigDict(populate_by_name=True)
+
+
+class TimetableResponse(BaseModel):
+    """시간표 목록 응답 래퍼 (Timetable List Response Wrapper).
+
+    Attributes:
+        timetables: List of timetable information
+    """
+
+    timetables: list[Timetable] = Field(default_factory=list, description="List of timetables")
 
     model_config = ConfigDict(populate_by_name=True)

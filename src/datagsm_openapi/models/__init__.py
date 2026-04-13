@@ -14,7 +14,7 @@ from .enums import (
     StudentRole,
     StudentSortBy,
 )
-from .neis import Meal, Schedule
+from .neis import Meal, MealResponse, Schedule, ScheduleResponse, Timetable, TimetableResponse
 from .project import ParticipantInfo, Project, ProjectResponse
 from .student import Student, StudentResponse
 
@@ -28,13 +28,17 @@ __all__ = [
     "CommonApiResponse",
     "Major",
     "Meal",
+    "MealResponse",
     "MealType",
     "ParticipantInfo",
     "Project",
     "ProjectResponse",
     "ProjectSortBy",
     "Schedule",
+    "ScheduleResponse",
     "Sex",
+    "Timetable",
+    "TimetableResponse",
     "SortDirection",
     "Student",
     "StudentResponse",
