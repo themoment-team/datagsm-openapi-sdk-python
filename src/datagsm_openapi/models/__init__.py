@@ -39,9 +39,9 @@ __all__ = [
     "Sex",
     "SortDirection",
     "Student",
-    "Timetable",
-    "TimetableResponse",
     "StudentResponse",
     "StudentRole",
     "StudentSortBy",
+    "Timetable",
+    "TimetableResponse",
 ]
