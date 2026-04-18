@@ -5,7 +5,7 @@ from typing import Optional
 from pydantic import BaseModel, ConfigDict, Field
 
 from .club import Club
-from .enums import Major, Sex
+from .enums import Major, ProjectStatus, Sex
 
 
 class ParticipantInfo(BaseModel):
@@ -43,6 +43,9 @@ class Project(BaseModel):
         description: Project description
         club: Associated club
         participants: List of project participants
+        start_year: Year the project started
+        end_year: Year the project ended (None if still active)
+        status: Project operation status (ACTIVE or ENDED)
     """
 
     id: int = Field(..., description="Project ID")
@@ -52,6 +55,11 @@ class Project(BaseModel):
     participants: list[ParticipantInfo] = Field(
         default_factory=list, description="Project participants"
     )
+    start_year: int = Field(..., alias="startYear", description="Year the project started")
+    end_year: Optional[int] = Field(
+        None, alias="endYear", description="Year the project ended"
+    )
+    status: ProjectStatus = Field(..., description="Project operation status")
 
     model_config = ConfigDict(populate_by_name=True)
 

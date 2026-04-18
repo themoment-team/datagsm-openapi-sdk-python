@@ -89,3 +89,10 @@ class ProjectSortBy(str, Enum):
 
     ID = "ID"
     NAME = "NAME"
+
+
+class ProjectStatus(str, Enum):
+    """프로젝트 운영 상태 (Project Status)."""
+
+    ACTIVE = "ACTIVE"
+    ENDED = "ENDED"

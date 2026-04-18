@@ -3,7 +3,7 @@
 from dataclasses import dataclass
 from typing import Optional
 
-from ..models import Project, ProjectResponse, ProjectSortBy, SortDirection
+from ..models import Project, ProjectResponse, ProjectSortBy, ProjectStatus, SortDirection
 from ._base import BaseApi
 
 
@@ -15,6 +15,7 @@ class ProjectRequest:
         project_id: Project ID for exact match
         project_name: Project name for filtering
         club_id: Club ID filter
+        status: Project operation status filter (default: ACTIVE)
         page: Page number (default: 0)
         size: Page size (default: 100)
         sort_by: Sort field
@@ -24,6 +25,7 @@ class ProjectRequest:
     project_id: Optional[int] = None
     project_name: Optional[str] = None
     club_id: Optional[int] = None
+    status: Optional[ProjectStatus] = ProjectStatus.ACTIVE
     page: int = 0
     size: int = 100
     sort_by: Optional[ProjectSortBy] = None
@@ -39,6 +41,7 @@ class ProjectRequest:
             "projectId": self.project_id,
             "projectName": self.project_name,
             "clubId": self.club_id,
+            "status": self.status.value if self.status else None,
             "page": self.page,
             "size": self.size,
             "sortBy": self.sort_by.value if self.sort_by else None,
