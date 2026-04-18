@@ -22,6 +22,7 @@ from .api import (
     ScheduleRequest,
     StudentApi,
     StudentRequest,
+    TimetableRequest,
 )
 from .client import DataGsmClient
 from .exceptions import (
@@ -56,6 +57,7 @@ __all__ = [
     "ServerErrorException",
     "StudentApi",
     "StudentRequest",
+    "TimetableRequest",
     "UnauthorizedException",
     "ValidationException",
 ]

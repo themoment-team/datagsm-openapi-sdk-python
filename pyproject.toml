@@ -93,8 +93,6 @@ select = [
     "RUF", # Ruff-specific rules
 ]
 ignore = [
-    "ANN101", # Missing type annotation for self
-    "ANN102", # Missing type annotation for cls
     "ANN401", # Dynamically typed expressions (Any) - needed for *args in context managers
     "N818",   # Exception naming - DataGsmException is the intended name
     "UP035",  # typing.Type vs type - Python 3.9 compatibility

@@ -4,7 +4,7 @@ from dataclasses import dataclass
 from datetime import date as Date
 from typing import Optional
 
-from ..models import Meal, Schedule
+from ..models import Meal, MealResponse, Schedule, ScheduleResponse, Timetable, TimetableResponse
 from ._base import BaseApi
 
 
@@ -68,10 +68,47 @@ class ScheduleRequest:
         return params
 
 
+@dataclass
+class TimetableRequest:
+    """시간표 조회 요청 파라미터 (Timetable Query Parameters).
+
+    Use either 'date' for a single day or 'start_date' and 'end_date' for a date range.
+    Either 'date' or both 'start_date' and 'end_date' must be provided.
+
+    Attributes:
+        grade: Grade to query (1-3)
+        class_num: Class number to query (1-4)
+        date: Single date to query
+        start_date: Start date for range query
+        end_date: End date for range query
+    """
+
+    grade: int = 0
+    class_num: int = 0
+    date: Optional[Date] = None
+    start_date: Optional[Date] = None
+    end_date: Optional[Date] = None
+
+    def to_params(self) -> dict[str, Optional[object]]:
+        """Convert to query parameters dictionary.
+
+        Returns:
+            Dictionary of query parameters
+        """
+        params: dict[str, Optional[object]] = {
+            "grade": self.grade,
+            "classNum": self.class_num,
+            "date": self.date,
+            "startDate": self.start_date,
+            "endDate": self.end_date,
+        }
+        return params
+
+
 class NeisApi(BaseApi):
     """NEIS 데이터 API (NEIS Data API).
 
-    Provides methods for querying school meal and schedule information from NEIS.
+    Provides methods for querying school meal, schedule, and timetable information from NEIS.
     """
 
     def get_meals(self, request: Optional[MealRequest] = None) -> list[Meal]:
@@ -104,7 +141,10 @@ class NeisApi(BaseApi):
             >>> week_meals = api.get_meals(request)
         """
         req = request or MealRequest(date=Date.today())
-        return self._get("/v1/neis/meals", params=req.to_params(), response_type=list[Meal])
+        response = self._get(
+            "/v1/neis/meals", params=req.to_params(), response_type=MealResponse
+        )
+        return response.meals
 
     def get_schedules(self, request: Optional[ScheduleRequest] = None) -> list[Schedule]:
         """학사일정 정보 조회 (Get Schedule Information).
@@ -136,6 +176,41 @@ class NeisApi(BaseApi):
             >>> month_schedules = api.get_schedules(request)
         """
         req = request or ScheduleRequest(date=Date.today())
-        return self._get(
-            "/v1/neis/schedules", params=req.to_params(), response_type=list[Schedule]
+        response = self._get(
+            "/v1/neis/schedules", params=req.to_params(), response_type=ScheduleResponse
         )
+        return response.schedules
+
+    def get_timetables(self, request: TimetableRequest) -> list[Timetable]:
+        """시간표 정보 조회 (Get Timetable Information).
+
+        Query school timetable information for a specific grade, class, and date or date range.
+        Either 'date' or both 'start_date' and 'end_date' must be provided in the request.
+
+        Args:
+            request: Query parameters (grade, class_num, and date/date range are required)
+
+        Returns:
+            List of timetables
+
+        Example:
+            >>> from datetime import date
+            >>> api = NeisApi(http_client)
+            >>>
+            >>> # Get timetable for a specific date
+            >>> request = TimetableRequest(grade=1, class_num=1, date=date(2026, 4, 7))
+            >>> timetables = api.get_timetables(request)
+            >>>
+            >>> # Get timetables for a date range
+            >>> request = TimetableRequest(
+            ...     grade=2,
+            ...     class_num=3,
+            ...     start_date=date(2026, 4, 7),
+            ...     end_date=date(2026, 4, 11)
+            ... )
+            >>> week_timetables = api.get_timetables(request)
+        """
+        response = self._get(
+            "/v1/neis/timetables", params=request.to_params(), response_type=TimetableResponse
+        )
+        return response.timetables
