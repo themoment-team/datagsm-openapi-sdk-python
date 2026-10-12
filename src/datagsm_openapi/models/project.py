@@ -46,6 +46,8 @@ class Project(BaseModel):
         start_year: Year the project started
         end_year: Year the project ended (None if still active)
         status: Project operation status (ACTIVE or ENDED)
+        repositories: List of project repository URLs
+        tech_stacks: List of project tech stacks
     """
 
     id: int = Field(..., description="Project ID")
@@ -60,6 +62,12 @@ class Project(BaseModel):
         None, alias="endYear", description="Year the project ended"
     )
     status: ProjectStatus = Field(..., description="Project operation status")
+    repositories: list[str] = Field(
+        default_factory=list, description="Project repository URLs"
+    )
+    tech_stacks: list[str] = Field(
+        default_factory=list, alias="techStacks", description="Project tech stacks"
+    )
 
     model_config = ConfigDict(populate_by_name=True)
 
