@@ -1,9 +1,17 @@
 """Project API module for DataGSM OpenAPI SDK."""
 
 from dataclasses import dataclass
-from typing import Optional
+from typing import Optional, Union
 
-from ..models import Project, ProjectResponse, ProjectSortBy, ProjectStatus, SortDirection
+from .._json import enum_value
+from ..models import (
+    Project,
+    ProjectCategory,
+    ProjectResponse,
+    ProjectSortBy,
+    ProjectStatus,
+    SortDirection,
+)
 from ._base import BaseApi
 
 
@@ -16,6 +24,7 @@ class ProjectRequest:
         project_name: Project name for filtering
         club_id: Club ID filter
         status: Project operation status filter (default: ACTIVE)
+        category: Only projects that include this category (default: all)
         page: Page number (default: 0)
         size: Page size (default: 100)
         sort_by: Sort field
@@ -26,6 +35,7 @@ class ProjectRequest:
     project_name: Optional[str] = None
     club_id: Optional[int] = None
     status: Optional[ProjectStatus] = ProjectStatus.ACTIVE
+    category: Optional[Union[ProjectCategory, str]] = None
     page: int = 0
     size: int = 100
     sort_by: Optional[ProjectSortBy] = None
@@ -42,6 +52,7 @@ class ProjectRequest:
             "projectName": self.project_name,
             "clubId": self.club_id,
             "status": self.status.value if self.status else None,
+            "category": enum_value(self.category),
             "page": self.page,
             "size": self.size,
             "sortBy": self.sort_by.value if self.sort_by else None,

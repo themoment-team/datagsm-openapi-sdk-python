@@ -90,6 +90,20 @@ class ProjectSortBy(str, Enum):
     NAME = "NAME"
 
 
+class ProjectCategory(str, Enum):
+    """프로젝트 카테고리 (Project Category).
+
+    A project may belong to multiple categories. The server may introduce new values
+    over time; response models keep unknown values as plain strings.
+    """
+
+    TOY_PROJECT = "TOY_PROJECT"  # 토이 프로젝트
+    TEAM = "TEAM"  # 팀 프로젝트
+    CLUB = "CLUB"  # 동아리 프로젝트
+    IDEA_FESTIVAL = "IDEA_FESTIVAL"  # 아이디어페스티벌
+    NOT_DEPLOYED = "NOT_DEPLOYED"  # 미배포
+
+
 class ProjectStatus(str, Enum):
     """프로젝트 운영 상태 (Project Status)."""
 
