@@ -24,7 +24,8 @@ class StudentRequest:
         specialty: Specialty filter (e.g. Backend)
         major: Major (department) filter
         github_id: GitHub ID filter (partial match)
-        include_withdrawn: Include withdrawn students (default: False)
+        include_graduates: Include graduated students (server default: False)
+        include_withdrawn: Include withdrawn students (server default: False)
         only_enrolled: Filter to enrolled students only, excluding GRADUATE and WITHDRAWN
         page: Page number (default: 0)
         size: Page size (default: 300)
@@ -44,6 +45,7 @@ class StudentRequest:
     specialty: Optional[str] = None
     major: Optional[Major] = None
     github_id: Optional[str] = None
+    include_graduates: Optional[bool] = None
     include_withdrawn: Optional[bool] = None
     only_enrolled: Optional[bool] = None
     page: int = 0
@@ -70,6 +72,7 @@ class StudentRequest:
             "specialty": self.specialty,
             "major": self.major.value if self.major else None,
             "githubId": self.github_id,
+            "includeGraduates": self.include_graduates,
             "includeWithdrawn": self.include_withdrawn,
             "onlyEnrolled": self.only_enrolled,
             "page": self.page,
@@ -115,7 +118,7 @@ class StudentApi(BaseApi):
     def get_student(self, student_id: int) -> Optional[Student]:
         """특정 학생 조회 (Get Specific Student).
 
-        Retrieve a single student by ID.
+        Retrieve a single student by ID, including graduated and withdrawn students.
 
         Args:
             student_id: Student ID
@@ -129,7 +132,9 @@ class StudentApi(BaseApi):
             >>> if student:
             ...     print(f"Name: {student.name}")
         """
-        request = StudentRequest(student_id=student_id)
+        request = StudentRequest(
+            student_id=student_id, include_graduates=True, include_withdrawn=True
+        )
         response = self.get_students(request)
 
         if response.students:
