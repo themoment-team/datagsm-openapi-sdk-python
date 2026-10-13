@@ -16,6 +16,7 @@ from ._version import __version__
 from .api import (
     ClubApi,
     ClubRequest,
+    ClubWriteRequest,
     CreateStudentRequest,
     MealRequest,
     NeisApi,
@@ -45,6 +46,7 @@ __all__ = [
     "BadRequestException",
     "ClubApi",
     "ClubRequest",
+    "ClubWriteRequest",
     "ConflictException",
     "CreateStudentRequest",
     "DataGsmClient",
