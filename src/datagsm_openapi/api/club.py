@@ -15,7 +15,8 @@ class ClubRequest:
         club_id: Club ID for exact match
         club_name: Club name for filtering
         club_type: Club type filter (MAJOR_CLUB, AUTONOMOUS_CLUB)
-        status: Club operation status filter (ACTIVE, ABOLISHED)
+        status: Club operation status filter (ACTIVE, ABOLISHED), sent as ``clubStatus``
+        founded_year: Founded year filter
         page: Page number (default: 0)
         size: Page size (default: 100)
         include_leader_in_participants: Include leader in participants list (default: False)
@@ -27,6 +28,7 @@ class ClubRequest:
     club_name: Optional[str] = None
     club_type: Optional[ClubType] = None
     status: Optional[ClubStatus] = None
+    founded_year: Optional[int] = None
     page: int = 0
     size: int = 100
     include_leader_in_participants: bool = False
@@ -43,7 +45,8 @@ class ClubRequest:
             "clubId": self.club_id,
             "clubName": self.club_name,
             "clubType": self.club_type.value if self.club_type else None,
-            "status": self.status.value if self.status else None,
+            "clubStatus": self.status.value if self.status else None,
+            "foundedYear": self.founded_year,
             "page": self.page,
             "size": self.size,
             "includeLeaderInParticipants": self.include_leader_in_participants,
