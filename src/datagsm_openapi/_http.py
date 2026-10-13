@@ -1,12 +1,13 @@
 """HTTP client abstraction layer for DataGSM OpenAPI SDK."""
 
-from typing import Any, Optional
+from typing import Any, NoReturn, Optional
 
 import httpx
 
 from ._version import __version__
 from .exceptions import (
     BadRequestException,
+    ConflictException,
     DataGsmException,
     ForbiddenException,
     NetworkException,
@@ -14,7 +15,17 @@ from .exceptions import (
     RateLimitException,
     ServerErrorException,
     UnauthorizedException,
+    ValidationException,
 )
+
+_STATUS_EXCEPTIONS: dict[int, type[DataGsmException]] = {
+    400: BadRequestException,
+    401: UnauthorizedException,
+    403: ForbiddenException,
+    404: NotFoundException,
+    409: ConflictException,
+    429: RateLimitException,
+}
 
 
 class HttpClient:
@@ -86,7 +97,7 @@ class HttpClient:
             )
         return self._client
 
-    def _handle_error(self, response: httpx.Response) -> None:
+    def _handle_error(self, response: httpx.Response) -> NoReturn:
         """Handle HTTP error responses.
 
         Args:
@@ -97,193 +108,122 @@ class HttpClient:
             UnauthorizedException: For 401 errors
             ForbiddenException: For 403 errors
             NotFoundException: For 404 errors
+            ConflictException: For 409 errors
             RateLimitException: For 429 errors
             ServerErrorException: For 5xx errors
             DataGsmException: For other errors
         """
+        error_body: Optional[dict[str, Any]] = None
+        error_message = response.text or f"HTTP {response.status_code} error"
         try:
-            error_body = response.json()
-            error_message = error_body.get("message", response.text)
-        except Exception:
-            error_body = None
-            error_message = response.text or f"HTTP {response.status_code} error"
+            parsed = response.json()
+        except ValueError:
+            parsed = None
+        if isinstance(parsed, dict):
+            error_body = parsed
+            message = parsed.get("message")
+            if isinstance(message, str) and message:
+                error_message = message
 
         status_code = response.status_code
+        exception_type = _STATUS_EXCEPTIONS.get(status_code)
 
-        if status_code == 400:
-            raise BadRequestException(message=error_message, response_body=error_body)
-        elif status_code == 401:
-            raise UnauthorizedException(message=error_message, response_body=error_body)
-        elif status_code == 403:
-            raise ForbiddenException(message=error_message, response_body=error_body)
-        elif status_code == 404:
-            raise NotFoundException(message=error_message, response_body=error_body)
-        elif status_code == 429:
-            raise RateLimitException(message=error_message, response_body=error_body)
-        elif 500 <= status_code < 600:
+        if exception_type is not None:
+            raise exception_type(message=error_message, response_body=error_body)
+        if 500 <= status_code < 600:
             raise ServerErrorException(
                 message=error_message,
                 status_code=status_code,
                 response_body=error_body,
             )
-        else:
-            raise DataGsmException(
-                message=error_message,
-                status_code=status_code,
-                response_body=error_body,
-            )
+        raise DataGsmException(
+            message=error_message,
+            status_code=status_code,
+            response_body=error_body,
+        )
+
+    def request(
+        self,
+        method: str,
+        path: str,
+        params: Optional[dict[str, Any]] = None,
+        json: Optional[Any] = None,
+    ) -> Optional[Any]:
+        """Send an HTTP request and decode the JSON response body.
+
+        Args:
+            method: HTTP method (GET, POST, PUT, DELETE)
+            path: API endpoint path (e.g., "/v1/students")
+            params: Query parameters
+            json: JSON request body
+
+        Returns:
+            Decoded JSON body, or None when the response has no body (e.g. 204 No Content)
+
+        Raises:
+            NetworkException: For connection or timeout errors
+            ValidationException: If a non-empty success body is not valid JSON
+            DataGsmException: For API errors
+        """
+        try:
+            client = self._get_client()
+            response = client.request(method, path, params=params, json=json)
+        except (httpx.ConnectError, httpx.TimeoutException) as e:
+            raise NetworkException(
+                message=f"Network error: {e!s}",
+                original_exception=e,
+            ) from e
+        except httpx.HTTPError as e:
+            raise NetworkException(
+                message=f"HTTP error: {e!s}",
+                original_exception=e,
+            ) from e
+
+        if response.is_error:
+            self._handle_error(response)
+
+        if response.status_code == 204 or not response.content.strip():
+            return None
+        try:
+            return response.json()
+        except ValueError as e:
+            raise ValidationException(
+                message=f"Response body is not valid JSON (HTTP {response.status_code})",
+            ) from e
 
     def get(
         self,
         path: str,
         params: Optional[dict[str, Any]] = None,
-    ) -> dict[str, Any]:
-        """Make a GET request.
-
-        Args:
-            path: API endpoint path (e.g., "/students")
-            params: Query parameters
-
-        Returns:
-            JSON response as a dictionary
-
-        Raises:
-            NetworkException: For connection or timeout errors
-            DataGsmException: For API errors
-        """
-        try:
-            client = self._get_client()
-            response = client.get(path, params=params)
-            response.raise_for_status()
-            return response.json()  # type: ignore[no-any-return]
-        except httpx.HTTPStatusError as e:
-            self._handle_error(e.response)
-            raise  # This line will never be reached, but makes mypy happy
-        except (httpx.ConnectError, httpx.TimeoutException) as e:
-            raise NetworkException(
-                message=f"Network error: {e!s}",
-                original_exception=e,
-            ) from e
-        except httpx.HTTPError as e:
-            raise NetworkException(
-                message=f"HTTP error: {e!s}",
-                original_exception=e,
-            ) from e
+    ) -> Optional[Any]:
+        """Make a GET request. See :meth:`request`."""
+        return self.request("GET", path, params=params)
 
     def post(
         self,
         path: str,
-        json: Optional[dict[str, Any]] = None,
+        json: Optional[Any] = None,
         params: Optional[dict[str, Any]] = None,
-    ) -> dict[str, Any]:
-        """Make a POST request.
-
-        Args:
-            path: API endpoint path
-            json: JSON request body
-            params: Query parameters
-
-        Returns:
-            JSON response as a dictionary
-
-        Raises:
-            NetworkException: For connection or timeout errors
-            DataGsmException: For API errors
-        """
-        try:
-            client = self._get_client()
-            response = client.post(path, json=json, params=params)
-            response.raise_for_status()
-            return response.json()  # type: ignore[no-any-return]
-        except httpx.HTTPStatusError as e:
-            self._handle_error(e.response)
-            raise
-        except (httpx.ConnectError, httpx.TimeoutException) as e:
-            raise NetworkException(
-                message=f"Network error: {e!s}",
-                original_exception=e,
-            ) from e
-        except httpx.HTTPError as e:
-            raise NetworkException(
-                message=f"HTTP error: {e!s}",
-                original_exception=e,
-            ) from e
+    ) -> Optional[Any]:
+        """Make a POST request. See :meth:`request`."""
+        return self.request("POST", path, params=params, json=json)
 
     def put(
         self,
         path: str,
-        json: Optional[dict[str, Any]] = None,
+        json: Optional[Any] = None,
         params: Optional[dict[str, Any]] = None,
-    ) -> dict[str, Any]:
-        """Make a PUT request.
-
-        Args:
-            path: API endpoint path
-            json: JSON request body
-            params: Query parameters
-
-        Returns:
-            JSON response as a dictionary
-
-        Raises:
-            NetworkException: For connection or timeout errors
-            DataGsmException: For API errors
-        """
-        try:
-            client = self._get_client()
-            response = client.put(path, json=json, params=params)
-            response.raise_for_status()
-            return response.json()  # type: ignore[no-any-return]
-        except httpx.HTTPStatusError as e:
-            self._handle_error(e.response)
-            raise
-        except (httpx.ConnectError, httpx.TimeoutException) as e:
-            raise NetworkException(
-                message=f"Network error: {e!s}",
-                original_exception=e,
-            ) from e
-        except httpx.HTTPError as e:
-            raise NetworkException(
-                message=f"HTTP error: {e!s}",
-                original_exception=e,
-            ) from e
+    ) -> Optional[Any]:
+        """Make a PUT request. See :meth:`request`."""
+        return self.request("PUT", path, params=params, json=json)
 
     def delete(
         self,
         path: str,
         params: Optional[dict[str, Any]] = None,
-    ) -> dict[str, Any]:
-        """Make a DELETE request.
-
-        Args:
-            path: API endpoint path
-            params: Query parameters
-
-        Returns:
-            JSON response as a dictionary
-
-        Raises:
-            NetworkException: For connection or timeout errors
-            DataGsmException: For API errors
-        """
-        try:
-            client = self._get_client()
-            response = client.delete(path, params=params)
-            response.raise_for_status()
-            return response.json()  # type: ignore[no-any-return]
-        except httpx.HTTPStatusError as e:
-            self._handle_error(e.response)
-            raise
-        except (httpx.ConnectError, httpx.TimeoutException) as e:
-            raise NetworkException(
-                message=f"Network error: {e!s}",
-                original_exception=e,
-            ) from e
-        except httpx.HTTPError as e:
-            raise NetworkException(
-                message=f"HTTP error: {e!s}",
-                original_exception=e,
-            ) from e
+    ) -> Optional[Any]:
+        """Make a DELETE request. See :meth:`request`."""
+        return self.request("DELETE", path, params=params)
 
     def close(self) -> None:
         """Close the HTTP client and release resources."""

@@ -28,6 +28,7 @@ from .api import (
 from .client import DataGsmClient
 from .exceptions import (
     BadRequestException,
+    ConflictException,
     DataGsmException,
     ForbiddenException,
     NetworkException,
@@ -42,6 +43,7 @@ __all__ = [
     "BadRequestException",
     "ClubApi",
     "ClubRequest",
+    "ConflictException",
     "DataGsmClient",
     "DataGsmException",
     "ForbiddenException",

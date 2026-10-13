@@ -45,29 +45,86 @@ class BaseApi:
         Raises:
             ValidationException: If response validation fails
         """
-        # Clean params (remove None values, serialize dates, etc.)
         clean = clean_params(params) if params else None
-
-        # Make HTTP request
         response_data = self._http.get(path, params=clean)
 
-        # If no response type specified, return raw data
         if response_type is None:
-            return response_data  # type: ignore[return-value]
+            return cast(T, response_data)
+        return self._parse_data(response_data, response_type)
 
-        # Parse as CommonApiResponse
+    def _send(
+        self,
+        method: str,
+        path: str,
+        response_type: Type[T],
+        body: Optional[dict[str, Any]] = None,
+    ) -> T:
+        """Make a write request whose response wraps a data payload.
+
+        Args:
+            method: HTTP method
+            path: API endpoint path
+            response_type: Pydantic model class for response data
+            body: JSON request body
+
+        Returns:
+            Parsed response data
+
+        Raises:
+            ValidationException: If response validation fails
+        """
+        response_data = self._http.request(method, path, json=body)
+        return self._parse_data(response_data, response_type)
+
+    def _send_no_content(
+        self,
+        method: str,
+        path: str,
+        body: Optional[dict[str, Any]] = None,
+    ) -> None:
+        """Make a write request whose endpoint returns no data.
+
+        The server may answer with 204 No Content, an empty 200 body, or a
+        ``CommonApiResponse`` envelope without data; all of them are treated as success.
+
+        Args:
+            method: HTTP method
+            path: API endpoint path
+            body: JSON request body
+        """
+        self._http.request(method, path, json=body)
+
+    @staticmethod
+    def _parse_data(response_data: Any, response_type: Type[T]) -> T:
+        """Parse a ``CommonApiResponse`` envelope and return its data.
+
+        Args:
+            response_data: Decoded JSON response body
+            response_type: Pydantic model class for response data
+
+        Returns:
+            Parsed response data
+
+        Raises:
+            ValidationException: If the body is missing, malformed, or has no data
+        """
+        if response_data is None:
+            raise ValidationException(
+                message="Response body is empty",
+                validation_errors=[],
+            )
         try:
             wrapped_response = CommonApiResponse[response_type].model_validate(  # type: ignore[valid-type]
                 response_data
             )
-            if wrapped_response.data is None:
-                raise ValidationException(
-                    message="Response data is None",
-                    validation_errors=[],
-                )
-            return cast(T, wrapped_response.data)
         except ValidationError as e:
             raise ValidationException(
                 message=f"Response validation failed: {e!s}",
                 validation_errors=cast(list[dict[str, Any]], e.errors()),
             ) from e
+        if wrapped_response.data is None:
+            raise ValidationException(
+                message="Response data is None",
+                validation_errors=[],
+            )
+        return cast(T, wrapped_response.data)
