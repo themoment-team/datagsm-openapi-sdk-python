@@ -17,16 +17,18 @@ class ParticipantInfo(BaseModel):
         id: Student ID
         name: Student name
         email: Email address
-        student_number: Student ID number
-        major: Major
+        student_number: Student ID number (None if no student number is assigned)
+        major: Major (None if unknown)
         sex: Gender
     """
 
     id: int = Field(..., description="Student ID")
     name: str = Field(..., description="Student name")
     email: str = Field(..., description="Email address")
-    student_number: int = Field(..., alias="studentNumber", description="Student ID number")
-    major: Major = Field(..., description="Major")
+    student_number: Optional[int] = Field(
+        None, alias="studentNumber", description="Student ID number"
+    )
+    major: Optional[Major] = Field(None, description="Major")
     sex: Sex = Field(..., description="Gender")
 
     model_config = ConfigDict(populate_by_name=True)
