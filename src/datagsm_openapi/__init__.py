@@ -16,6 +16,7 @@ from ._version import __version__
 from .api import (
     ClubApi,
     ClubRequest,
+    CreateStudentRequest,
     MealRequest,
     NeisApi,
     ProjectApi,
@@ -24,6 +25,7 @@ from .api import (
     StudentApi,
     StudentRequest,
     TimetableRequest,
+    UpdateStudentRequest,
 )
 from .client import DataGsmClient
 from .exceptions import (
@@ -44,6 +46,7 @@ __all__ = [
     "ClubApi",
     "ClubRequest",
     "ConflictException",
+    "CreateStudentRequest",
     "DataGsmClient",
     "DataGsmException",
     "ForbiddenException",
@@ -60,6 +63,7 @@ __all__ = [
     "StudentRequest",
     "TimetableRequest",
     "UnauthorizedException",
+    "UpdateStudentRequest",
     "ValidationException",
     "__version__",
 ]

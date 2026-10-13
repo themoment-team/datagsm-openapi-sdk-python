@@ -51,9 +51,7 @@ def test_timetable_single_date(client: DataGsmClient, transport: RecordingTransp
 def test_meal_range_params(client: DataGsmClient, transport: RecordingTransport) -> None:
     transport.queue_data({"meals": [payloads.meal()]})
 
-    meals = client.neis.get_meals(
-        MealRequest(from_date=date(2026, 2, 1), to_date=date(2026, 2, 7))
-    )
+    meals = client.neis.get_meals(MealRequest(from_date=date(2026, 2, 1), to_date=date(2026, 2, 7)))
 
     params = transport.last.url.params
     assert params["fromDate"] == "2026-02-01"

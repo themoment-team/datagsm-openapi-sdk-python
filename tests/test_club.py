@@ -54,9 +54,7 @@ def test_club_sort_by_matches_server_enum() -> None:
     }
 
 
-def test_get_club_returns_first_match(
-    client: DataGsmClient, transport: RecordingTransport
-) -> None:
+def test_get_club_returns_first_match(client: DataGsmClient, transport: RecordingTransport) -> None:
     transport.queue_data(payloads.page("clubs", [payloads.club(id=7)]))
 
     club = client.clubs.get_club(7)

@@ -11,6 +11,7 @@ from datagsm_openapi import DataGsmClient
 
 BASE_URL = "https://openapi.test"
 
+
 class RecordingTransport:
     """httpx.MockTransport wrapper that records requests and replays canned responses."""
 
@@ -45,9 +46,11 @@ class RecordingTransport:
     def last_json(self) -> Any:
         return json.loads(self.last.content)
 
+
 @pytest.fixture
 def transport() -> RecordingTransport:
     return RecordingTransport()
+
 
 @pytest.fixture
 def client(transport: RecordingTransport) -> Iterator[DataGsmClient]:
