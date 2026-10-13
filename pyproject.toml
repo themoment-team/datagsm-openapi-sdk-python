@@ -43,7 +43,7 @@ dev = [
 
 [project.urls]
 Homepage = "https://github.com/themoment-team/datagsm-openapi-sdk-python"
-Documentation = "https://docs.themoment.io/datagsm/openapi/sdk/python"
+Documentation = "https://docs.datagsm.kr/api/sdk/python"
 Repository = "https://github.com/themoment-team/datagsm-openapi-sdk-python"
 Issues = "https://github.com/themoment-team/datagsm-openapi-sdk-python/issues"
 "API Documentation" = "https://openapi.datagsm.kr"

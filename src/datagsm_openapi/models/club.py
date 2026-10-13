@@ -18,7 +18,7 @@ class Club(BaseModel):
     Attributes:
         id: Club ID
         name: Club name
-        type: Club type (MAJOR_CLUB, JOB_CLUB, AUTONOMOUS_CLUB)
+        type: Club type (MAJOR_CLUB, AUTONOMOUS_CLUB)
     """
 
     id: int = Field(..., description="Club ID")
