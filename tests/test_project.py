@@ -1,7 +1,7 @@
 """Project API query and response tests."""
 
 from datagsm_openapi import DataGsmClient, ProjectRequest
-from datagsm_openapi.models import Project, ProjectCategory
+from datagsm_openapi.models import Project, ProjectCategory, ProjectStatus
 
 from . import payloads
 from .conftest import RecordingTransport
@@ -77,3 +77,39 @@ def test_category_filter_omitted_by_default(
     client.projects.get_projects()
 
     assert "category" not in transport.last.url.params
+
+
+def test_get_project_falls_back_to_ended(
+    client: DataGsmClient, transport: RecordingTransport
+) -> None:
+    transport.queue_data(payloads.page("projects", []))
+    transport.queue_data(
+        payloads.page("projects", [payloads.project(id=3, status="ENDED", endYear=2025)])
+    )
+
+    project = client.projects.get_project(3)
+
+    assert project is not None
+    assert project.status == ProjectStatus.ENDED
+    statuses = [r.url.params["status"] for r in transport.requests]
+    assert statuses == ["ACTIVE", "ENDED"]
+
+
+def test_get_project_returns_active_without_second_request(
+    client: DataGsmClient, transport: RecordingTransport
+) -> None:
+    transport.queue_data(payloads.page("projects", [payloads.project(id=3)]))
+
+    project = client.projects.get_project(3)
+
+    assert project is not None
+    assert len(transport.requests) == 1
+
+
+def test_get_project_returns_none_when_missing(
+    client: DataGsmClient, transport: RecordingTransport
+) -> None:
+    transport.queue_data(payloads.page("projects", []))
+    transport.queue_data(payloads.page("projects", []))
+
+    assert client.projects.get_project(404) is None

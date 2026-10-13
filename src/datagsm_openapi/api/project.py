@@ -94,7 +94,9 @@ class ProjectApi(BaseApi):
     def get_project(self, project_id: int) -> Optional[Project]:
         """특정 프로젝트 조회 (Get Specific Project).
 
-        Retrieve a single project by ID.
+        Retrieve a single project by ID regardless of its status. The server only returns
+        ACTIVE projects unless a status is given, so ENDED projects are looked up as a
+        fallback.
 
         Args:
             project_id: Project ID
@@ -109,9 +111,8 @@ class ProjectApi(BaseApi):
             ...     print(f"Project: {project.name}")
             ...     print(f"Description: {project.description}")
         """
-        request = ProjectRequest(project_id=project_id)
-        response = self.get_projects(request)
-
-        if response.projects:
-            return response.projects[0]
+        for status in (ProjectStatus.ACTIVE, ProjectStatus.ENDED):
+            response = self.get_projects(ProjectRequest(project_id=project_id, status=status))
+            if response.projects:
+                return response.projects[0]
         return None
