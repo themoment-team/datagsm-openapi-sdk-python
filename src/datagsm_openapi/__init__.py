@@ -12,6 +12,7 @@ Example:
             print(f"Total students: {students.total_elements}")
 """
 
+from ._version import __version__
 from .api import (
     ClubApi,
     ClubRequest,
@@ -37,8 +38,6 @@ from .exceptions import (
     ValidationException,
 )
 
-__version__ = "1.3.0"
-
 __all__ = [
     "BadRequestException",
     "ClubApi",
@@ -60,4 +59,5 @@ __all__ = [
     "TimetableRequest",
     "UnauthorizedException",
     "ValidationException",
+    "__version__",
 ]

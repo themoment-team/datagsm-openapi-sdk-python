@@ -4,7 +4,7 @@ from typing import Any, Optional
 
 import httpx
 
-from . import __version__
+from ._version import __version__
 from .exceptions import (
     BadRequestException,
     DataGsmException,
