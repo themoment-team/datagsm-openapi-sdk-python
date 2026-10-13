@@ -2,7 +2,7 @@
 
 from .club import ClubApi, ClubRequest, ClubWriteRequest
 from .neis import MealRequest, NeisApi, ScheduleRequest, TimetableRequest
-from .project import ProjectApi, ProjectRequest
+from .project import EndProjectRequest, ProjectApi, ProjectRequest, ProjectWriteRequest
 from .student import CreateStudentRequest, StudentApi, StudentRequest, UpdateStudentRequest
 
 __all__ = [
@@ -10,10 +10,12 @@ __all__ = [
     "ClubRequest",
     "ClubWriteRequest",
     "CreateStudentRequest",
+    "EndProjectRequest",
     "MealRequest",
     "NeisApi",
     "ProjectApi",
     "ProjectRequest",
+    "ProjectWriteRequest",
     "ScheduleRequest",
     "StudentApi",
     "StudentRequest",
