@@ -80,7 +80,6 @@ class ClubSortBy(str, Enum):
     NAME = "NAME"
     TYPE = "TYPE"
     FOUNDED_YEAR = "FOUNDED_YEAR"
-    ABOLISHED_YEAR = "ABOLISHED_YEAR"
     STATUS = "STATUS"
 
 
