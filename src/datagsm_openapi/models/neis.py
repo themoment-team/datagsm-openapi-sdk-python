@@ -22,7 +22,7 @@ class Meal(BaseModel):
         meal_date: Meal date
         meal_type: Meal type (BREAKFAST, LUNCH, DINNER)
         meal_menu: List of menu items
-        meal_allergy_info: List of allergy information
+        meal_allergy_info: List of allergy information (None if not provided)
         meal_calories: Calorie information
         origin_info: Origin information of ingredients
         nutrition_info: Nutrition information
@@ -39,8 +39,8 @@ class Meal(BaseModel):
     meal_menu: list[str] = Field(
         default_factory=list, alias="mealMenu", description="Menu items"
     )
-    meal_allergy_info: list[str] = Field(
-        default_factory=list, alias="mealAllergyInfo", description="Allergy information"
+    meal_allergy_info: Optional[list[str]] = Field(
+        None, alias="mealAllergyInfo", description="Allergy information"
     )
     meal_calories: Optional[str] = Field(None, alias="mealCalories", description="Calories")
     origin_info: Optional[str] = Field(

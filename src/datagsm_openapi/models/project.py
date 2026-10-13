@@ -1,11 +1,27 @@
 """Project-related models for DataGSM OpenAPI SDK."""
 
-from typing import Optional
+from typing import Annotated, Any, Optional, Union
 
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import BaseModel, BeforeValidator, ConfigDict, Field
 
 from .club import Club
-from .enums import Major, ProjectStatus, Sex
+from .enums import Major, ProjectCategory, ProjectStatus, Sex
+
+
+def _coerce_project_category(value: Any) -> Any:
+    """Convert known category strings to ProjectCategory and keep unknown ones as str."""
+    if isinstance(value, str) and not isinstance(value, ProjectCategory):
+        try:
+            return ProjectCategory(value)
+        except ValueError:
+            return value
+    return value
+
+
+ProjectCategoryValue = Annotated[
+    Union[ProjectCategory, str], BeforeValidator(_coerce_project_category)
+]
+"""A ProjectCategory, or the raw string for a category this SDK version does not know."""
 
 
 class ParticipantInfo(BaseModel):
@@ -17,16 +33,18 @@ class ParticipantInfo(BaseModel):
         id: Student ID
         name: Student name
         email: Email address
-        student_number: Student ID number
-        major: Major
+        student_number: Student ID number (None if no student number is assigned)
+        major: Major (None if unknown)
         sex: Gender
     """
 
     id: int = Field(..., description="Student ID")
     name: str = Field(..., description="Student name")
     email: str = Field(..., description="Email address")
-    student_number: int = Field(..., alias="studentNumber", description="Student ID number")
-    major: Major = Field(..., description="Major")
+    student_number: Optional[int] = Field(
+        None, alias="studentNumber", description="Student ID number"
+    )
+    major: Optional[Major] = Field(None, description="Major")
     sex: Sex = Field(..., description="Gender")
 
     model_config = ConfigDict(populate_by_name=True)
@@ -46,6 +64,11 @@ class Project(BaseModel):
         start_year: Year the project started
         end_year: Year the project ended (None if still active)
         status: Project operation status (ACTIVE or ENDED)
+        categories: Project categories (empty if uncategorized). Values unknown to this
+            SDK version are kept as plain strings.
+        icon_url: Project icon URL
+        icon_key: Project icon object key
+        deployment_url: Project deployment URL
         repositories: List of project repository URLs
         tech_stacks: List of project tech stacks
     """
@@ -62,6 +85,16 @@ class Project(BaseModel):
         None, alias="endYear", description="Year the project ended"
     )
     status: ProjectStatus = Field(..., description="Project operation status")
+    categories: list[ProjectCategoryValue] = Field(
+        default_factory=list, description="Project categories (empty if uncategorized)"
+    )
+    icon_url: Optional[str] = Field(None, alias="iconUrl", description="Project icon URL")
+    icon_key: Optional[str] = Field(
+        None, alias="iconKey", description="Project icon object key"
+    )
+    deployment_url: Optional[str] = Field(
+        None, alias="deploymentUrl", description="Project deployment URL"
+    )
     repositories: list[str] = Field(
         default_factory=list, description="Project repository URLs"
     )

@@ -72,22 +72,24 @@ class ScheduleRequest:
 class TimetableRequest:
     """시간표 조회 요청 파라미터 (Timetable Query Parameters).
 
-    Use either 'date' for a single day or 'start_date' and 'end_date' for a date range.
-    Either 'date' or both 'start_date' and 'end_date' must be provided.
+    ``grade`` and ``class_num`` are required by the server.
+    Use either 'date' for a single day or 'from_date'/'to_date' for a date range.
+    'date' cannot be combined with 'from_date'/'to_date', and the range may span
+    at most 365 days.
 
     Attributes:
-        grade: Grade to query (1-3)
-        class_num: Class number to query (1-4)
+        grade: Grade to query (1-3, required)
+        class_num: Class number to query (1-4, required)
         date: Single date to query
-        start_date: Start date for range query
-        end_date: End date for range query
+        from_date: Start date for range query
+        to_date: End date for range query
     """
 
-    grade: int = 0
-    class_num: int = 0
+    grade: int
+    class_num: int
     date: Optional[Date] = None
-    start_date: Optional[Date] = None
-    end_date: Optional[Date] = None
+    from_date: Optional[Date] = None
+    to_date: Optional[Date] = None
 
     def to_params(self) -> dict[str, Optional[object]]:
         """Convert to query parameters dictionary.
@@ -99,8 +101,8 @@ class TimetableRequest:
             "grade": self.grade,
             "classNum": self.class_num,
             "date": self.date,
-            "startDate": self.start_date,
-            "endDate": self.end_date,
+            "fromDate": self.from_date,
+            "toDate": self.to_date,
         }
         return params
 
@@ -185,7 +187,7 @@ class NeisApi(BaseApi):
         """시간표 정보 조회 (Get Timetable Information).
 
         Query school timetable information for a specific grade, class, and date or date range.
-        Either 'date' or both 'start_date' and 'end_date' must be provided in the request.
+        Either 'date' or 'from_date'/'to_date' must be provided in the request.
 
         Args:
             request: Query parameters (grade, class_num, and date/date range are required)
@@ -205,8 +207,8 @@ class NeisApi(BaseApi):
             >>> request = TimetableRequest(
             ...     grade=2,
             ...     class_num=3,
-            ...     start_date=date(2026, 4, 7),
-            ...     end_date=date(2026, 4, 11)
+            ...     from_date=date(2026, 4, 7),
+            ...     to_date=date(2026, 4, 11)
             ... )
             >>> week_timetables = api.get_timetables(request)
         """

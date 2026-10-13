@@ -19,11 +19,11 @@ class Student(BaseModel):
         name: Student name
         sex: Gender
         email: Email address
-        grade: Grade (1-3)
-        class_num: Class number
-        number: Student number within class
-        student_number: Full student ID number
-        major: Department (SW_DEVELOPMENT, SMART_IOT, AI)
+        grade: Grade (1-3, None for graduates or students without a student number)
+        class_num: Class number (None if no student number is assigned)
+        number: Student number within class (None if no student number is assigned)
+        student_number: Full student ID number (None if no student number is assigned)
+        major: Department (SW_DEVELOPMENT, SMART_IOT, AI; None if unknown)
         specialty: Specialty (e.g. Backend)
         role: Student role (GENERAL_STUDENT, STUDENT_COUNCIL, WITHDRAWN, etc.)
         dormitory_floor: Dormitory floor number
@@ -38,11 +38,15 @@ class Student(BaseModel):
     name: str = Field(..., description="Student name")
     sex: Sex = Field(..., description="Gender")
     email: str = Field(..., description="Email address")
-    grade: int = Field(..., ge=1, le=3, description="Grade (1-3)")
-    class_num: int = Field(..., alias="classNum", description="Class number")
-    number: int = Field(..., description="Student number within class")
-    student_number: int = Field(..., alias="studentNumber", description="Full student ID number")
-    major: Major = Field(..., description="Department (SW_DEVELOPMENT, SMART_IOT, AI)")
+    grade: Optional[int] = Field(None, ge=1, le=3, description="Grade (1-3)")
+    class_num: Optional[int] = Field(None, alias="classNum", description="Class number")
+    number: Optional[int] = Field(None, description="Student number within class")
+    student_number: Optional[int] = Field(
+        None, alias="studentNumber", description="Full student ID number"
+    )
+    major: Optional[Major] = Field(
+        None, description="Department (SW_DEVELOPMENT, SMART_IOT, AI)"
+    )
     specialty: Optional[str] = Field(None, description="Specialty (e.g. Backend)")
     role: StudentRole = Field(..., description="Student role")
     dormitory_floor: Optional[int] = Field(

@@ -1,7 +1,8 @@
 """JSON serialization utilities for DataGSM OpenAPI SDK."""
 
 from datetime import date, datetime
-from typing import Any
+from enum import Enum
+from typing import Any, Optional, Union
 
 
 def serialize_date(value: date) -> str:
@@ -26,6 +27,22 @@ def serialize_datetime(value: datetime) -> str:
         ISO format datetime string
     """
     return value.isoformat()
+
+
+def enum_value(value: Optional[Union[Enum, str]]) -> Optional[str]:
+    """Return the wire value of an enum member, passing plain strings and None through.
+
+    Args:
+        value: Enum member, raw string, or None
+
+    Returns:
+        The string value to send to the server, or None
+    """
+    if value is None:
+        return None
+    if isinstance(value, Enum):
+        return str(value.value)
+    return value
 
 
 def clean_params(params: dict[str, Any]) -> dict[str, Any]:
