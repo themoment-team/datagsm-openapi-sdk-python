@@ -8,6 +8,7 @@ from .enums import (
     ClubType,
     Major,
     MealType,
+    ProjectCategory,
     ProjectSortBy,
     ProjectStatus,
     Sex,
@@ -16,7 +17,7 @@ from .enums import (
     StudentSortBy,
 )
 from .neis import Meal, MealResponse, Schedule, ScheduleResponse, Timetable, TimetableResponse
-from .project import ParticipantInfo, Project, ProjectResponse
+from .project import ParticipantInfo, Project, ProjectCategoryValue, ProjectResponse
 from .student import Student, StudentResponse
 
 __all__ = [
@@ -33,6 +34,8 @@ __all__ = [
     "MealType",
     "ParticipantInfo",
     "Project",
+    "ProjectCategory",
+    "ProjectCategoryValue",
     "ProjectResponse",
     "ProjectSortBy",
     "ProjectStatus",

@@ -18,7 +18,7 @@ class Club(BaseModel):
     Attributes:
         id: Club ID
         name: Club name
-        type: Club type (MAJOR_CLUB, JOB_CLUB, AUTONOMOUS_CLUB)
+        type: Club type (MAJOR_CLUB, AUTONOMOUS_CLUB)
     """
 
     id: int = Field(..., description="Club ID")
@@ -40,7 +40,7 @@ class ClubDetail(BaseModel):
         status: Club operation status (ACTIVE or ABOLISHED)
         founded_year: Year the club was founded
         abolished_year: Year the club was abolished (None if still active)
-        leader: Club leader information
+        leader: Club leader information (None if the club has no leader, e.g. ABOLISHED)
         participants: List of club members
     """
 
@@ -54,7 +54,7 @@ class ClubDetail(BaseModel):
     abolished_year: Optional[int] = Field(
         None, alias="abolishedYear", description="Year the club was abolished"
     )
-    leader: "ParticipantInfo" = Field(..., description="Club leader")
+    leader: Optional["ParticipantInfo"] = Field(None, description="Club leader")
     participants: list["ParticipantInfo"] = Field(
         default_factory=list, description="Club members"
     )

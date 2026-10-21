@@ -12,21 +12,28 @@ Example:
             print(f"Total students: {students.total_elements}")
 """
 
+from ._version import __version__
 from .api import (
     ClubApi,
     ClubRequest,
+    ClubWriteRequest,
+    CreateStudentRequest,
+    EndProjectRequest,
     MealRequest,
     NeisApi,
     ProjectApi,
     ProjectRequest,
+    ProjectWriteRequest,
     ScheduleRequest,
     StudentApi,
     StudentRequest,
     TimetableRequest,
+    UpdateStudentRequest,
 )
 from .client import DataGsmClient
 from .exceptions import (
     BadRequestException,
+    ConflictException,
     DataGsmException,
     ForbiddenException,
     NetworkException,
@@ -37,14 +44,16 @@ from .exceptions import (
     ValidationException,
 )
 
-__version__ = "1.3.0"
-
 __all__ = [
     "BadRequestException",
     "ClubApi",
     "ClubRequest",
+    "ClubWriteRequest",
+    "ConflictException",
+    "CreateStudentRequest",
     "DataGsmClient",
     "DataGsmException",
+    "EndProjectRequest",
     "ForbiddenException",
     "MealRequest",
     "NeisApi",
@@ -52,6 +61,7 @@ __all__ = [
     "NotFoundException",
     "ProjectApi",
     "ProjectRequest",
+    "ProjectWriteRequest",
     "RateLimitException",
     "ScheduleRequest",
     "ServerErrorException",
@@ -59,5 +69,7 @@ __all__ = [
     "StudentRequest",
     "TimetableRequest",
     "UnauthorizedException",
+    "UpdateStudentRequest",
     "ValidationException",
+    "__version__",
 ]

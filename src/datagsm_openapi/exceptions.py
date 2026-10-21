@@ -125,6 +125,27 @@ class NotFoundException(DataGsmException):
         super().__init__(message=message, status_code=404, response_body=response_body)
 
 
+class ConflictException(DataGsmException):
+    """Exception raised for 409 Conflict errors.
+
+    Indicates that the request conflicts with existing data, such as a duplicate
+    email, student number, club name, or project name.
+    """
+
+    def __init__(
+        self,
+        message: str = "Conflict",
+        response_body: Optional[dict[str, Any]] = None,
+    ) -> None:
+        """Initialize the exception.
+
+        Args:
+            message: Error message
+            response_body: Raw response body
+        """
+        super().__init__(message=message, status_code=409, response_body=response_body)
+
+
 class RateLimitException(DataGsmException):
     """Exception raised for 429 Too Many Requests errors.
 
